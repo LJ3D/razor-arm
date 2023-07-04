@@ -1,0 +1,3 @@
+[submodule "hostcode/arduinoserialio"]
+	path = hostcode/arduinoserialio
+	url = https://github.com/lj3d/arduinoserialio
