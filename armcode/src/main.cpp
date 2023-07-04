@@ -19,7 +19,7 @@ void showBranding()
     statusLabel = lv_label_create(lv_scr_act());
     lv_label_set_long_mode(statusLabel, LV_LABEL_LONG_WRAP);
     lv_label_set_recolor(statusLabel, true);
-    lv_label_set_text(statusLabel, "#FF0000 Not Connected#");
+    lv_label_set_text(statusLabel, "#E3E858 Not Connected#");
     lv_obj_set_width(statusLabel, 150);
     lv_obj_set_style_text_align(statusLabel, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_align(statusLabel, LV_ALIGN_CENTER, 0, -80);
@@ -36,7 +36,7 @@ void setConnectionStatus(bool status)
     }
     else
     {
-        lv_label_set_text(statusLabel, "#24C718 Ready#");
+        lv_label_set_text(statusLabel, "#AE64D9 Ready");
     }
 
     Braccio.lvgl_unlock();
