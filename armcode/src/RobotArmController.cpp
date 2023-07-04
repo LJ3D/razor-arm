@@ -3,6 +3,7 @@
 #include <Braccio++.h>
 #include <string.h>
 
+lv_obj_t *statusLabel;
 static float const HOME_POS[6] = {157.5, 157.5, 187.5, 57.5, 157.5, 90.0};
 
 RobotArmController *RobotArmController::Instance()
@@ -146,6 +147,7 @@ void RobotArmController::SetSpeed(RobotCommandParser::Argument *args, char *resp
     else if (speed == 1){
         Braccio.setAngularVelocity(100.0);
         Serial.println("OK");
+        lv_label_set_text(statusLabel, "#B52E05 MURDER#");
     }
     else
     {
