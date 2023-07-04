@@ -25,19 +25,21 @@ std::vector<double> getJointPositions(arduinoSerial& Serial){
     return v;
 }
 
-void setJointPositions(arduinoSerial& Serial, std::vector<double> positions){
-    std::string cmd = "SETX";
-    for(double& p : positions){
-        cmd += " " + std::to_string(p);
-    }
-    std::cout << "setJointPositions(): Sending command: " << cmd << "\n";
-    Serial.print(cmd+"\n");
+void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
+    idx += 1; // Robot doesnt count from 0 (cringe)
+    Serial.print("MOVE " + std::to_string(idx) + " " + std::to_string(adj) + "\n");
+    char response[256] = {0};
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    Serial.readBytes(response, 256);
+    std::cout << response << "\n";
 }
 
-void adjustJointPos(arduinoSerial& Serial, int id, double adjustment){
-    std::vector<double> currPos = getJointPositions(Serial);
-    currPos[id] += adjustment;
-    setJointPositions(Serial, currPos);
+void setSpeed(arduinoSerial& Serial, int stupidSpeed){
+    Serial.print("SPEED " + std::to_string(stupidSpeed) + "\n");
+    char response[256] = {0};
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    Serial.readBytes(response, 256);
+    std::cout << response << "\n";
 }
 
 int main(){
@@ -69,6 +71,7 @@ int main(){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     // End GLFW + OpenGL boilerplate
 
+    setSpeed(Serial, 10);
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
         glfwPollEvents(); // Check for events (keyboard, mouse, etc)
