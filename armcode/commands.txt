@@ -24,3 +24,4 @@ Serial commands
 "SETX" -> Move all joints to a position. Takes 6 doubles, one for each joint
 "SET" -> Move a joint to a certain position. Takes an int for the joint and a double for the angle
 "MOVE" -> Move a joint by a certain amount. Takes an int for the joint and a double for the angle
+"SPEED" -> Adjust the speed of the motors. Takes an int that must be 1000, 100 or 10, which will set it to Slow, Medium or Fast
