@@ -10,16 +10,15 @@
 
 std::vector<double> getJointPositions(arduinoSerial& Serial){
     char response[256];
-    while(Serial.read_s() != -1){
-
-    }
+    Serial.flush();
     Serial.print("READ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     Serial.readBytes(response, 256);
     std::cout << response << std::endl;
     double numbers[6] = {0};
-    char c;
-    std::sscanf(response, "READ\n[%lf%c%lf%c%lf%c%lf%c%lf%c%lf]", &numbers[0], &c, &numbers[1],&c,&numbers[2],&c,&numbers[3],&c,&numbers[4],&c,&numbers[5]);
+    if(std::sscanf(response, "READ\n[%lf,%lf,%lf,%lf,%lf,%lf]", &numbers[0], &numbers[1], &numbers[2], &numbers[3], &numbers[4], &numbers[5]) != 6){
+        std::cout << "ERR: Failed to parse response\n";
+    }
     std::vector<double> v(numbers, numbers + sizeof(numbers) / sizeof(numbers[0]));
     return v;
 }
@@ -83,7 +82,7 @@ int main(){
             std::cout << "\n";
         }
         if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_Z)){
-            adjustJointPos(Serial, 3, 15.0);
+            adjustJointPos(Serial, 2, 15.0);
         }
 
 
