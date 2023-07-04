@@ -1,0 +1,8 @@
+FWD: +J2, -J3
+BKW: -J2, +J3
+CLW: +J1
+ACW: -J1
+UPW: +J2, +J3 +J4
+DWN: -J2, -J3 -J4
+OPN: +J6
+CLS: -J6
