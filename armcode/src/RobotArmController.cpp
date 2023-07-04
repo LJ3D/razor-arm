@@ -143,6 +143,10 @@ void RobotArmController::SetSpeed(RobotCommandParser::Argument *args, char *resp
         Braccio.setAngularVelocity(45.0);
         Serial.println("OK");
     }
+    else if (speed == 1){
+        Braccio.setAngularVelocity(100.0);
+        Serial.println("OK");
+    }
     else
     {
         Serial.println("Invalid speed");
