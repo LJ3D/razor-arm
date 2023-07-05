@@ -13,11 +13,11 @@
 
 /*
     To-Do list
-    * Change code from using readBytes for responses to using readBytesUntil,
+    X Change code from using readBytes for responses to using readBytesUntil,
     updating the robot arm code accordingly to add some terminator character (if it doesnt already have one).
     Doing this should remove the lag in communications
     * See how high the baud rate can be set. 115200 should work
-    * 
+    * Fix speed command to make it less weird
 */
 
 
@@ -31,10 +31,10 @@ std::vector<double> getJointPositions(arduinoSerial& Serial){
     Serial.print("READ\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE];
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "getJointPositions(): Read response: " << response << std::endl;
     double numbers[6] = {157.5,157.5,187.5,57.5,157.5,90}; // Fallback to home position if sscanf fails
-    if(std::sscanf(response, "READ\n[%lf,%lf,%lf,%lf,%lf,%lf]", &numbers[0], &numbers[1], &numbers[2], &numbers[3], &numbers[4], &numbers[5]) != 6){
+    if(std::sscanf(response, "[%lf,%lf,%lf,%lf,%lf,%lf]", &numbers[0], &numbers[1], &numbers[2], &numbers[3], &numbers[4], &numbers[5]) != 6){
         std::cout << "ERR: Failed to parse response\n";
     }else{
         std::cout << "getJointPositions(): Parsed response: " << numbers[0] << ", " << numbers[1] << ", " << numbers[2] << ", " << numbers[3] << ", " << numbers[4] << ", " << numbers[5] << "\n";
@@ -67,7 +67,7 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
     Serial.print("MOVE " + std::to_string(idx) + " " + std::to_string(adj) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "adjustJointPos(): Read response: " << response << std::endl;
 }
 
@@ -88,7 +88,7 @@ void setSpeed(arduinoSerial& Serial, int stupidSpeed){
     Serial.print("SPEED " + std::to_string(stupidSpeed) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "setSpeed(): Read response: " << response << std::endl;
 }
 
@@ -101,7 +101,7 @@ void homeArm(arduinoSerial& Serial){
     Serial.print("HOME\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "homeArm(): Read response: " << response << std::endl;
 }
 
@@ -135,7 +135,7 @@ int main(){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     // End GLFW + OpenGL boilerplate
 
-    setSpeed(Serial, 10);
+    setSpeed(Serial, 1);
     double adjustment = 15.0;
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
@@ -144,8 +144,8 @@ int main(){
         /*
             Home the arm
         */
-        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
-            
+        if(glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS){
+            homeArm(Serial);
         }
 
         /*

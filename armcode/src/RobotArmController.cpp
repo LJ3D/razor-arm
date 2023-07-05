@@ -48,9 +48,7 @@ void RobotArmController::Loop()
         char line[128];
         size_t lineLength = Serial.readBytesUntil('\n', line, 127);
         line[lineLength] = '\0';
-
-        Serial.println(line);
-
+        
         char response[RobotCommandParser::MAX_RESPONSE_SIZE];
         parser->processCommand(line, response);
         Serial.println(response);
