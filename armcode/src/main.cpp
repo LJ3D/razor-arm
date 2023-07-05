@@ -36,7 +36,7 @@ void setConnectionStatus(bool status)
     }
     else
     {
-        lv_label_set_text(statusLabel, "#AE64D9 Ready");
+        lv_label_set_text(statusLabel, "#AE64D9 Ready#");
     }
 
     Braccio.lvgl_unlock();
