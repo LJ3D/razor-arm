@@ -14,17 +14,6 @@
 
 
 /*
-    To-Do list
-    X Change code from using readBytes for responses to using readBytesUntil,
-    updating the robot arm code accordingly to add some terminator character (if it doesnt already have one).
-    Doing this should remove the lag in communications
-    X See how high the baud rate can be set. 115200 should work
-    * Fix speed command to make it less weird
-*/
-
-
-
-/*
     Reads all the current joint positions from the arm.
     Currently only included as way to get potential debug info.
 */
