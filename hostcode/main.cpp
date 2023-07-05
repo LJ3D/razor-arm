@@ -8,16 +8,18 @@
 
 #define DEBUG true // Enables opengl debug info callback
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
-
+#define BAUD_RATE B115200
+#define ADJUSTMENT_START 10.0 // Degree adjustment per step
+#define SPEED_START 90 // Degrees per second speed
 
 
 /*
     To-Do list
-    * Change code from using readBytes for responses to using readBytesUntil,
+    X Change code from using readBytes for responses to using readBytesUntil,
     updating the robot arm code accordingly to add some terminator character (if it doesnt already have one).
     Doing this should remove the lag in communications
-    * See how high the baud rate can be set. 115200 should work
-    * 
+    X See how high the baud rate can be set. 115200 should work
+    * Fix speed command to make it less weird
 */
 
 
@@ -31,10 +33,10 @@ std::vector<double> getJointPositions(arduinoSerial& Serial){
     Serial.print("READ\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE];
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "getJointPositions(): Read response: " << response << std::endl;
     double numbers[6] = {157.5,157.5,187.5,57.5,157.5,90}; // Fallback to home position if sscanf fails
-    if(std::sscanf(response, "READ\n[%lf,%lf,%lf,%lf,%lf,%lf]", &numbers[0], &numbers[1], &numbers[2], &numbers[3], &numbers[4], &numbers[5]) != 6){
+    if(std::sscanf(response, "[%lf,%lf,%lf,%lf,%lf,%lf]", &numbers[0], &numbers[1], &numbers[2], &numbers[3], &numbers[4], &numbers[5]) != 6){
         std::cout << "ERR: Failed to parse response\n";
     }else{
         std::cout << "getJointPositions(): Parsed response: " << numbers[0] << ", " << numbers[1] << ", " << numbers[2] << ", " << numbers[3] << ", " << numbers[4] << ", " << numbers[5] << "\n";
@@ -67,28 +69,20 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
     Serial.print("MOVE " + std::to_string(idx) + " " + std::to_string(adj) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "adjustJointPos(): Read response: " << response << std::endl;
 }
 
 
 /*
     Sets the speed of the movement of the robot arm.
-    The "stupidSpeed" parameter is named as such because currently,
-    you must pass either 1000, 100, 10, or 1 to change the arms speed.
-    It translates to:
-    * 1000 = 15 degrees per second
-    * 100 = 30 degrees per second
-    * 10 = 45 degrees per second
-    * 1 = 100 degrees per second
-    This is something that should be rewritten on the arm to make it a bit nicer to use.
-    (actually just passing the desired deg/sec instead)
+    Speed is in degrees/second
 */
-void setSpeed(arduinoSerial& Serial, int stupidSpeed){
-    Serial.print("SPEED " + std::to_string(stupidSpeed) + "\n");
+void setSpeed(arduinoSerial& Serial, int speed){
+    Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "setSpeed(): Read response: " << response << std::endl;
 }
 
@@ -101,7 +95,7 @@ void homeArm(arduinoSerial& Serial){
     Serial.print("HOME\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
-    Serial.readBytes(response, RESPONSE_MAX_SIZE);
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "homeArm(): Read response: " << response << std::endl;
 }
 
@@ -110,7 +104,7 @@ int main(){
     // Initialise serial communication
     arduinoSerial Serial; // Provides very arduino-like functions for interacting with a serial device
     Serial.openPort("/dev/ttyACM0"); // Default file for an arduino uno
-    Serial.begin(B9600); // baud rate of 9600, this can be increased (probably) (as long as robot code also updated)
+    Serial.begin(BAUD_RATE);
 
     // Begin GLFW + OpenGL boilerplate
     glfwInit();
@@ -135,8 +129,8 @@ int main(){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     // End GLFW + OpenGL boilerplate
 
-    setSpeed(Serial, 10);
-    double adjustment = 15.0;
+    setSpeed(Serial, SPEED_START);
+    double adjustment = ADJUSTMENT_START;
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
         glfwPollEvents(); // Check for events (keyboard, mouse, etc)
@@ -144,8 +138,8 @@ int main(){
         /*
             Home the arm
         */
-        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
-            
+        if(glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS){
+            homeArm(Serial);
         }
 
         /*

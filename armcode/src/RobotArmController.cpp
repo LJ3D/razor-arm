@@ -37,7 +37,7 @@ bool RobotArmController::Setup()
     successful = successful && parser->registerCommand("MOVE", "id", [](auto *args, char *response)
                                                        { RobotArmController::instance->MoveServo(args, response); });
 
-    successful = successful && parser->registerCommand("SPEED", "i", [](auto *args, char *response)
+    successful = successful && parser->registerCommand("SPEED", "d", [](auto *args, char *response)
                                                        { RobotArmController::instance->SetSpeed(args, response); });
     return successful;
 }
@@ -49,9 +49,7 @@ void RobotArmController::Loop()
         char line[128];
         size_t lineLength = Serial.readBytesUntil('\n', line, 127);
         line[lineLength] = '\0';
-
-        Serial.println(line);
-
+        
         char response[RobotCommandParser::MAX_RESPONSE_SIZE];
         parser->processCommand(line, response);
         Serial.println(response);
@@ -127,30 +125,11 @@ void RobotArmController::MoveServo(RobotCommandParser::Argument *args, char *res
 
 void RobotArmController::SetSpeed(RobotCommandParser::Argument *args, char *response)
 {
-    auto speed = args[0].asInt64;
-// TODO: Test speed values
-    if (speed == 1000)
-    {
-        Braccio.setAngularVelocity(15.0);
-        Serial.println("OK");
-    }
-    else if (speed == 100)
-    {
-        Braccio.setAngularVelocity(30.0);
-        Serial.println("OK");
-    }
-    else if (speed == 10)
-    {
-        Braccio.setAngularVelocity(45.0);
-        Serial.println("OK");
-    }
-    else if (speed == 1){
-        Braccio.setAngularVelocity(100.0);
-        Serial.println("OK");
-        lv_label_set_text(statusLabel, "#B52E05 MURDER#");
-    }
-    else
-    {
+    double speed = args[0].asDouble;
+    if(speed > 120 || speed < 1){
         Serial.println("Invalid speed");
+    }else{
+        Braccio.setAngularVelocity(speed);
+        Serial.println("OK");
     }
 }
