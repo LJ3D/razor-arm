@@ -9,9 +9,9 @@
 #define DEBUG true // Enables opengl debug info callback
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
 #define BAUD_RATE B115200
-#define ADJUSTMENT_START 10.0 // Degree adjustment per step
-#define SPEED_START 90 // Degrees per second speed
-
+#define ADJUSTMENT_START 30 // Degree adjustment per step
+#define SPEED_START 30 // Degrees per second speed
+#define SYNC_TIMEOUT 100
 
 /*
     Reads all the current joint positions from the arm.
@@ -20,7 +20,7 @@
 std::vector<double> getJointPositions(arduinoSerial& Serial){
     Serial.flush();
     Serial.print("READ\n");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE];
     Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "getJointPositions(): Read response: " << response << std::endl;
@@ -56,7 +56,7 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
         throw std::runtime_error("ERR: adjustJointPos() passed invalid idx");
     }
     Serial.print("MOVE " + std::to_string(idx) + " " + std::to_string(adj) + "\n");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE] = {0};
     Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "adjustJointPos(): Read response: " << response << std::endl;
@@ -69,7 +69,7 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
 */
 void setSpeed(arduinoSerial& Serial, int speed){
     Serial.print("SPEED " + std::to_string(speed) + "\n");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE] = {0};
     Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "setSpeed(): Read response: " << response << std::endl;
@@ -82,7 +82,7 @@ void setSpeed(arduinoSerial& Serial, int speed){
 */
 void homeArm(arduinoSerial& Serial){
     Serial.print("HOME\n");
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE] = {0};
     Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
     std::cout << "homeArm(): Read response: " << response << std::endl;
