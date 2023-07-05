@@ -131,5 +131,6 @@ void RobotArmController::SetSpeed(RobotCommandParser::Argument *args, char *resp
     }else{
         Braccio.setAngularVelocity(speed);
         Serial.println("OK");
+        lv_label_set_text(statusLabel, speed >=100 ? "#A23400 ZOOOOOOOOM#" : "#29D62F Calm");
     }
 }
