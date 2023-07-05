@@ -76,18 +76,10 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
 
 /*
     Sets the speed of the movement of the robot arm.
-    The "stupidSpeed" parameter is named as such because currently,
-    you must pass either 1000, 100, 10, or 1 to change the arms speed.
-    It translates to:
-    * 1000 = 15 degrees per second
-    * 100 = 30 degrees per second
-    * 10 = 45 degrees per second
-    * 1 = 100 degrees per second
-    This is something that should be rewritten on the arm to make it a bit nicer to use.
-    (actually just passing the desired deg/sec instead)
+    Speed is in degrees/second
 */
-void setSpeed(arduinoSerial& Serial, int stupidSpeed){
-    Serial.print("SPEED " + std::to_string(stupidSpeed) + "\n");
+void setSpeed(arduinoSerial& Serial, int speed){
+    Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     char response[RESPONSE_MAX_SIZE] = {0};
     Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
