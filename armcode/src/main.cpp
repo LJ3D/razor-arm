@@ -3,7 +3,7 @@
 #include "RobotArmController.h"
 #include <CommandParser.h>
 
-const int baudRate = 9600;
+const int baudRate = 115200;
 lv_obj_t *statusLabel;
 
 RobotArmController *controller;

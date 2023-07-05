@@ -8,7 +8,9 @@
 
 #define DEBUG true // Enables opengl debug info callback
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
-
+#define BAUD_RATE B115200
+#define ADJUSTMENT_START 10.0 // Degree adjustment per step
+#define SPEED_START 90 // Degrees per second speed
 
 
 /*
@@ -16,7 +18,7 @@
     X Change code from using readBytes for responses to using readBytesUntil,
     updating the robot arm code accordingly to add some terminator character (if it doesnt already have one).
     Doing this should remove the lag in communications
-    * See how high the baud rate can be set. 115200 should work
+    X See how high the baud rate can be set. 115200 should work
     * Fix speed command to make it less weird
 */
 
@@ -110,7 +112,7 @@ int main(){
     // Initialise serial communication
     arduinoSerial Serial; // Provides very arduino-like functions for interacting with a serial device
     Serial.openPort("/dev/ttyACM0"); // Default file for an arduino uno
-    Serial.begin(B9600); // baud rate of 9600, this can be increased (probably) (as long as robot code also updated)
+    Serial.begin(BAUD_RATE);
 
     // Begin GLFW + OpenGL boilerplate
     glfwInit();
@@ -135,8 +137,8 @@ int main(){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     // End GLFW + OpenGL boilerplate
 
-    setSpeed(Serial, 1);
-    double adjustment = 15.0;
+    setSpeed(Serial, SPEED_START);
+    double adjustment = ADJUSTMENT_START;
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
         glfwPollEvents(); // Check for events (keyboard, mouse, etc)
