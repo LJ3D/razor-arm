@@ -16,6 +16,6 @@
 # Keyboard-Called Commands
 * homeArm(arduinoSerial& Serial) -> Sets all motors to their home position /-/ sends "HOME" over serial
 * getJointPositions(arduinoSerial& Serial) -> Retrieves the positions of all motors as a vector /-/ sends "READ" over serial
-* adjustJointPos(arduinoSerial& Serial, int idx, double adj) -> moves motor "idx" by "adj" degrees /-/ sends "MOVE [idx] [adj]" over serial
-* setJointPositions(arduinoSerial& Serial, std::vector<double> positions) -> moves all motors to the corresponding position in "positions" /-/ currently uncalled
+* adjustJointPos(arduinoSerial& Serial, int idx, double adj) -> Moves motor "idx" by "adj" degrees /-/ sends "MOVE [idx] [adj]" over serial
+* setJointPositions(arduinoSerial& Serial, std::vector<double> positions) -> Moves all motors to the corresponding position in "positions" /-/ currently uncalled /-/ Sends "SETX [positions]" over serial
 * setSpeed(arduinoSerial& Serial, int speed) -> Sets the movement speed of all motors to "speed" degrees per second /-/ Sends "SPEED [speed]" over serial /-/ "speed" is an int due to parsing issues with the double passed into "SPEED"

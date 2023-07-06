@@ -1,7 +1,7 @@
 # General File Info
 * armcode/src/main.cpp -> Defines arm initialisation functions
 * armcode/src/RobotArmController.cpp -> Defines the serial commands, including the home position constant
-* .pio/libdeps/nanorp2040connect/Arduino_Braccio_plusplus/src/braccio.h -> defines "Braccio" as type "BraccioClass", as well as defining "BraccioClass" and "Servo" classes
+* .pio/libdeps/nanorp2040connect/Arduino_Braccio_plusplus/src/braccio.h -> Defines "Braccio" as type "BraccioClass", as well as defining "BraccioClass" and "Servo" classes
 
 
 # RobotArmController
@@ -28,4 +28,4 @@
 * "SETX dddddd" -> Move all joints to a position. Takes 6 doubles, one for each joint
 * "SET id" -> Move a joint to a certain position. Takes an int for the joint and a double for the angle
 * "MOVE id" -> Move a joint by a certain amount. Takes an int for the joint and a double for the angle
-* "SPEED d" -> Adjust the speed of the motors to "d" deg/sec. 
+* "SPEED d" -> Adjust the speed of the motors to "d" deg/sec
