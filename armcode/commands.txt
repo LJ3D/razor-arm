@@ -1,5 +1,13 @@
+General File Info
+-----------------------------
+hostcode/main.cpp -> Holds the code for the control from the computer /-/ Contains the Keyboard Input code
+armcode/src/main.cpp -> Defines arm initialisation functions
+armcode/src/RobotArmController.cpp -> Defines the serial commands, including the home position constant
+.pio/libdeps/nanorp2040connect/Arduino_Braccio_plusplus/src/braccio.h -> defines "Braccio" as type "BraccioClass", as well as defining "BraccioClass" and "Servo" classes
+
+
 RobotArmController::
----------------------------
+-----------------------------
 Setup() -> Checks validity of other commands for this class
 LimpMode(bool isLimp) -> Disengage all motors 
 Read() -> Grab current angles and print to screen
@@ -11,17 +19,17 @@ SetSpeed(RobotCommandParser::Argument *args, char *response) -> needs testing, p
 
 
 SmartServoClass::
----------------------------
+-----------------------------
 setPosition(uint8_t const id, float const angle_deg) -> Moves a joint to angle_deg /-/ called by RobotArmController::SetCoordinates()
 
 
 Serial Commands
-----------------------------
+-----------------------------
 ////////////////////////////////////////////
 !! All Arguments must be separated by " " !!
 ////////////////////////////////////////////
 
-"LIMP" -> Disengage all motors. Takes 1 integer, fails if it is <=0
+"LIMP" -> Disengage all motors. Takes 1 integer, fails if it is < 1
 "READ" -> Retrieve the current positions of each motor
 "HOME" -> Return to natural position (157.5, 157.5, 157.5, 157.5, 257.5, 90.0)
 "SETX dddddd" -> Move all joints to a position. Takes 6 doubles, one for each joint
@@ -43,7 +51,7 @@ R-Arw,L-Arw -> Moves motor id 6 (base rotation) /-/ Calls adjustJointPos(arduino
 
 
 Keyboard-Called Commands
----------------------------
+----------------------------
 homeArm(arduinoSerial& Serial) -> Sets all motors to their home position /-/ sends "HOME" over serial
 getJointPositions(arduinoSerial& Serial) -> Retrieves the positions of all motors as a vector /-/ sends "READ" over serial
 adjustJointPos(arduinoSerial& Serial, int idx, double adj) -> moves motor "idx" by "adj" degrees /-/ sends "MOVE [idx] [adj]" over serial
