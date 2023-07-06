@@ -3,6 +3,7 @@
 #include <Braccio++.h>
 #include <string.h>
 
+lv_obj_t *statusLabel;
 static float const HOME_POS[6] = {157.5, 157.5, 187.5, 57.5, 157.5, 90.0};
 
 RobotArmController *RobotArmController::Instance()
