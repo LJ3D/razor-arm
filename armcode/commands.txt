@@ -21,7 +21,7 @@ Serial commands
 "LIMP" -> Disengage all motors. Takes 1 integer, fails if it is <=0
 "READ" -> Retrieve the current positions of each motor
 "HOME" -> Return to natural position (157.5, 157.5, 157.5, 157.5, 257.5, 90.0)
-"SETX" -> Move all joints to a position. Takes 6 doubles, one for each joint
-"SET" -> Move a joint to a certain position. Takes an int for the joint and a double for the angle
-"MOVE" -> Move a joint by a certain amount. Takes an int for the joint and a double for the angle
-"SPEED" -> Adjust the speed of the motors. Takes an int that must be 1000, 100 or 10, which will set it to Slow, Medium or Fast
+"SETX dddddd" -> Move all joints to a position. Takes 6 doubles, one for each joint
+"SET id" -> Move a joint to a certain position. Takes an int for the joint and a double for the angle
+"MOVE id" -> Move a joint by a certain amount. Takes an int for the joint and a double for the angle
+"SPEED d" -> Adjust the speed of the motors. Takes an int that must be 1000, 100 or 10, which will set it to Slow, Medium or Fast
