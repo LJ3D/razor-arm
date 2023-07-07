@@ -224,8 +224,7 @@ int main(){
             reset pos and speed
         */
         if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS){
-            std::cout << "Reset Positions and Speed\n";
-            homeArm(Serial);
+            std::cout << "Reset speed and adjustment\n";
             setSpeed(Serial);
             pos_adjustment = POS_ADJUSTMENT_START;
         }
