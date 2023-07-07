@@ -16,6 +16,7 @@
 #define SYNC_TIMEOUT 100
 
 int curr_speed = SPEED_START;
+int wait_time;
 /*
     Reads all the current joint positions from the arm.
     Currently only included as way to get potential debug info.
@@ -80,6 +81,7 @@ void setSpeed(arduinoSerial& Serial, int speed = SPEED_START, bool noset = false
     if(!noset){
         curr_speed = speed;
     }
+    wait_time = 1000 / speed
     Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::cout << "setSpeed(): Set speed to " << speed << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
@@ -115,7 +117,7 @@ void wave(arduinoSerial& Serial){
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
 }
 
@@ -130,7 +132,7 @@ void pickUp(arduinoSerial& Serial){
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
 }
 
@@ -149,7 +151,7 @@ void worm(arduinoSerial& Serial){
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
 }
 void chaos(arduinoSerial& Serial, bool death = false){
@@ -162,7 +164,7 @@ void chaos(arduinoSerial& Serial, bool death = false){
             p[i] = (double)(rand() % 150 + 50);
         }
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
     setSpeed(Serial, curr_speed);
 }
