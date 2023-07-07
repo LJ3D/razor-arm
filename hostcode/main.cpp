@@ -110,6 +110,24 @@ void wave(arduinoSerial& Serial){
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }
+void worm(arduinoSerial& Serial){
+    std::vector<std::vector<double>> positions = {
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
+    };
+    for(auto p : positions){
+        setJointPositions(Serial, p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
+}
 
 int main(){
     // Initialise serial communication
@@ -211,7 +229,10 @@ int main(){
             std::cout << "Waving!\n";
             wave(Serial);
         }
-
+        if(glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS){
+            std::cout << "Worm Time!\n";
+            worm(Serial);
+        }
         glfwSwapBuffers(window); // Render the current frame
     }
 
