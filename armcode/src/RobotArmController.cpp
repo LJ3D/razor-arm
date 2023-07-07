@@ -129,6 +129,11 @@ void RobotArmController::SetSpeed(RobotCommandParser::Argument *args, char *resp
         Serial.println("Invalid speed");
     }else{
         Braccio.setAngularVelocity(speed);
+
+        // We do a little hacking ;)
+        Braccio.positions(angles);
+        Braccio.moveTo(angles[0], angles[1], angles[2], angles[3], angles[4], angles[5]);
+
         Serial.println("OK");
     }
 }
