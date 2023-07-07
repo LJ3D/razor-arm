@@ -125,6 +125,39 @@ void pickUp(arduinoSerial& Serial){
     }
 }
 
+void pickUp(arduinoSerial& Serial){
+    std::vector<std::vector<double>> positions = {
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90},
+        {157.5, 100, 200, 100, 100, 90},
+        {157.5, 100, 200, 100, 150, 90},
+        {157.5, 100, 200, 100, 150, 120},
+        {157.5, 100, 200, 100, 100, 120},
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
+    };
+    for(auto p : positions){
+        setJointPositions(Serial, p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+void worm(arduinoSerial& Serial){
+    std::vector<std::vector<double>> positions = {
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
+    };
+    for(auto p : positions){
+        setJointPositions(Serial, p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
+}
+
 int main(){
     // Initialise serial communication
     arduinoSerial Serial; // Provides very arduino-like functions for interacting with a serial device
@@ -224,6 +257,18 @@ int main(){
         if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
             std::cout << "Waving!\n";
             wave(Serial);
+        }
+
+        /*
+            Pretend to pick something up
+        */
+        if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
+            std::cout << "Dancing!\n";
+            pickUp(Serial);
+        }
+        if(glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS){
+            std::cout << "Worm Time!\n";
+            worm(Serial);
         }
 
         /*
