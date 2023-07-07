@@ -144,7 +144,8 @@ void worm(arduinoSerial& Serial){
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 }
-void chaos(arduinoSerial& Serial){
+void chaos(arduinoSerial& Serial, bool death = false){
+    setSpeed(death ? 120 : SPEED_START);
     std::vector<double> p;
     p.resize(6);
     for(int i=0; i<20; i++){
@@ -154,6 +155,7 @@ void chaos(arduinoSerial& Serial){
         setJointPositions(Serial, p);
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
+    setSpeed(SPEED_START);
 }
 int main(){
     // Initialise serial communication
@@ -277,7 +279,7 @@ int main(){
         */
         if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
             std::cout << "FEAR THE ARM \n";
-            chaos(Serial);
+            chaos(Serial, glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
         }
 
 
