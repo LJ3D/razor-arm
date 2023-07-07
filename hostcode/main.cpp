@@ -145,8 +145,12 @@ void worm(arduinoSerial& Serial){
     }
 }
 void chaos(arduinoSerial& Serial){
+    std::vector<double> p;
+    p.resize(6);
+    for(int i=0; i<6; i++){
+        p[i] = (double)(rand() % 150 + 50);
+    }
     for(int i=0; i<20; i++){
-        std::vector<double> p = {157.5, (double)(rand() % 150 + 50), (double)(rand() % 150 + 50), (double)(rand() % 150 + 50), (double)(rand() % 150 + 50), (double)(rand() % 150 + 50)};
         setJointPositions(Serial, p);
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
