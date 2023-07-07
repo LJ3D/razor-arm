@@ -151,7 +151,7 @@ void worm(arduinoSerial& Serial){
 }
 void chaos(arduinoSerial& Serial, bool death = false){
     setSpeed(Serial, death ? 120 : curr_speed, death);
-    std::cout << (death ? "CHAOS IS COME, ": "") + "FEAR THE ARM \n";
+    std::cout << (death ? "CHAOS IS COME, ": "") + std::string("FEAR THE ARM \n");
     std::vector<double> p;
     p.resize(6);
     for(int i=0; i<20; i++){
