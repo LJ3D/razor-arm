@@ -56,7 +56,6 @@ void setJointPositions(arduinoSerial& Serial, std::vector<double>& positions){
     std::cout << "setJointPositions(): Read response: " << response << std::endl;
 }
 
-
 /*
     Moves one of the joints (specified by idx, which ranges from 1-6) by adj degrees
 */
@@ -175,6 +174,7 @@ int main(){
     Serial.openPort("/dev/ttyACM0"); // Default file for an arduino uno
     Serial.begin(BAUD_RATE);
     srand(time(NULL));
+    bool limp = false;
     // Begin GLFW + OpenGL boilerplate
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Use OpenGL 3.3 core profile:
@@ -329,6 +329,11 @@ int main(){
             pos_adjustment += POS_ADJUSTMENT_ADJUSTMENT;
             pos_adjustment = std::max(pos_adjustment, 0.0);
             pos_adjustment = std::min(pos_adjustment, 45.0);
+        }
+        if(glfwGetKey(window, GLFW_KEY_BACKSLASH) == GLFW_PRESS){
+            Serial.print(std::string("LIMP ") + limp ? "0": "1");
+            limp = !limp;
+            std::cout << "Toggled limp";
         }
 
 
