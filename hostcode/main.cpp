@@ -77,8 +77,11 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
 void setSpeed(arduinoSerial& Serial, int speed = SPEED_START, bool noset = false){
     speed = speed >= 120 ? 120 : speed;
     speed = speed <= 10 ? 10 : speed;
-    curr_speed <<- !noset ? speed : curr_speed;
+    if(!noset){
+        curr_speed = speed;
+    }
     Serial.print("SPEED " + std::to_string(speed) + "\n");
+    std::cout << "setSpeed(): Set speed to " << speed << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE] = {0};
     Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
