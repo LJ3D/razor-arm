@@ -280,8 +280,12 @@ int main(){
             chaos
         */
         if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
-
             chaos(Serial, glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
+        }
+        if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS){
+            std::cout << "Reset Positions and Speed\n";
+            homeArm(Serial);
+            setSpeed(Serial);
         }
 
 
