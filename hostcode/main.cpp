@@ -146,6 +146,7 @@ void worm(arduinoSerial& Serial){
 }
 void chaos(arduinoSerial& Serial, bool death = false){
     setSpeed(Serial, death ? 120 : SPEED_START);
+    std::cout << (death ? "CHAOS IS COME, ": "") + "FEAR THE ARM \n";
     std::vector<double> p;
     p.resize(6);
     for(int i=0; i<20; i++){
@@ -278,7 +279,7 @@ int main(){
             chaos
         */
         if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
-            std::cout << "FEAR THE ARM \n";
+
             chaos(Serial, glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
         }
 
