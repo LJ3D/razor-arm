@@ -81,7 +81,7 @@ void setSpeed(arduinoSerial& Serial, int speed = SPEED_START, bool noset = false
     if(!noset){
         curr_speed = speed;
     }
-    wait_time = 1000 / speed
+    wait_time = 1000 / speed;
     Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::cout << "setSpeed(): Set speed to " << speed << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
@@ -329,8 +329,8 @@ int main(){
             pos_adjustment = std::max(pos_adjustment, 0.0);
             pos_adjustment = std::min(pos_adjustment, 45.0);
         }
-        if(glfwGetKey(window, GLFW_KEY_BACKSLASH) == GLFW_PRESS){
-            Serial.print(std::string("LIMP ") + limp ? "0": "1");
+        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
+            Serial.print(std::string("LIMP ") + (limp ? "0": "1") + "\n");
             limp = !limp;
             std::cout << "Toggled limp";
         }
