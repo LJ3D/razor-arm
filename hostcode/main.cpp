@@ -145,7 +145,7 @@ void worm(arduinoSerial& Serial){
     }
 }
 void chaos(arduinoSerial& Serial, bool death = false){
-    setSpeed(death ? 120 : SPEED_START);
+    setSpeed(Serial, death ? 120 : SPEED_START);
     std::vector<double> p;
     p.resize(6);
     for(int i=0; i<20; i++){
@@ -155,7 +155,7 @@ void chaos(arduinoSerial& Serial, bool death = false){
         setJointPositions(Serial, p);
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
-    setSpeed(SPEED_START);
+    setSpeed(Serial, SPEED_START);
 }
 int main(){
     // Initialise serial communication
@@ -262,7 +262,7 @@ int main(){
             Pretend to pick something up
         */
         if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
-            std::cout << "Dancing!\n";
+            std::cout << "Pretending I am picking something up!\n";
             pickUp(Serial);
         }
 
