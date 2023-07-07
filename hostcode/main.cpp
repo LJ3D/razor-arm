@@ -5,6 +5,7 @@
 #include "arduinoserialio/arduinoSerial.hpp"
 #include <thread>
 #include <vector>
+#include <time.h>
 
 #define DEBUG true // Enables opengl debug info callback
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
@@ -128,28 +129,45 @@ void pickUp(arduinoSerial& Serial){
 void worm(arduinoSerial& Serial){
     std::vector<std::vector<double>> positions = {
         {157.5, 157.5, 187.5, 57.5, 157.5, 90},
-        {157.5, 157.5, 225, 70, 167.5, 90},
-        {157.5, 157.5, 125, 100, 167.5, 90},
-        {157.5, 157.5, 225, 70, 167.5, 90},
-        {157.5, 157.5, 125, 100, 167.5, 90},
-        {157.5, 157.5, 225, 70, 167.5, 90},
-        {157.5, 157.5, 125, 100, 167.5, 90},
-        {157.5, 157.5, 225, 70, 167.5, 90},
-        {157.5, 157.5, 125, 100, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
+        {157.5, 157.5, 200, 30, 167.5, 90},
+        {157.5, 157.5, 100, 80, 167.5, 90},
         {157.5, 157.5, 187.5, 57.5, 157.5, 90}
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 }
-
+void chaos(arduinoSerial& Serial){
+    std::vector<std::vector<double>> positions = {
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
+    };
+    for(auto p : positions){
+        setJointPositions(Serial, p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
+}
 int main(){
     // Initialise serial communication
     arduinoSerial Serial; // Provides very arduino-like functions for interacting with a serial device
     Serial.openPort("/dev/ttyACM0"); // Default file for an arduino uno
     Serial.begin(BAUD_RATE);
-
+    srand(time(NULL))
     // Begin GLFW + OpenGL boilerplate
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Use OpenGL 3.3 core profile:
@@ -260,7 +278,16 @@ int main(){
             std::cout << "Worm Time!\n";
             worm(Serial);
         }
-        
+
+        /*
+            chaos
+        */
+        if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
+            std::cout << "FEAR THE ARM \n";
+            chaos(Serial);
+        }
+
+
         glfwSwapBuffers(window); // Render the current frame
     }
 
