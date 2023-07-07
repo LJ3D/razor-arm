@@ -10,7 +10,8 @@
 #define DEBUG true // Enables opengl debug info callback
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
 #define BAUD_RATE B115200
-#define ADJUSTMENT_START 15 // Degree adjustment per step
+#define POS_ADJUSTMENT_START 15 // Degree adjustment per step
+#define SPEED_ADJUSTMENT 10 // Degrees per second
 #define SPEED_START 60 // Degrees per second speed
 #define SYNC_TIMEOUT 100
 
@@ -73,7 +74,10 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
     Sets the speed of the movement of the robot arm.
     Speed is in degrees/second
 */
-void setSpeed(arduinoSerial& Serial, int speed = SPEED_START){
+void setSpeed(arduinoSerial& Serial, int speed = SPEED_START, bool noset = false){
+    speed = speed >= 120 ? 120 : speed;
+    speed = speed <= 10 ? 10 : speed;
+    curr_speed <<- !noset ? speed : curr_speed;
     Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE] = {0};
@@ -146,7 +150,7 @@ void worm(arduinoSerial& Serial){
     }
 }
 void chaos(arduinoSerial& Serial, bool death = false){
-    setSpeed(Serial, death ? 120 : curr_speed);
+    setSpeed(Serial, death ? 120 : curr_speed, death);
     std::cout << (death ? "CHAOS IS COME, ": "") + "FEAR THE ARM \n";
     std::vector<double> p;
     p.resize(6);
@@ -189,7 +193,7 @@ int main(){
     // End GLFW + OpenGL boilerplate
 
     setSpeed(Serial);
-    double adjustment = ADJUSTMENT_START;
+    double pos_adjustment = POS_ADJUSTMENT_START;
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
         glfwPollEvents(); // Check for events (keyboard, mouse, etc)
@@ -213,43 +217,52 @@ int main(){
         }
 
         /*
+            reset pos and speed
+        */
+        if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS){
+            std::cout << "Reset Positions and Speed\n";
+            homeArm(Serial);
+            setSpeed(Serial);
+        }
+
+        /*
             Per-joint control, a bit difficult to use but easy to implement
         */
         if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
-            adjustJointPos(Serial, 1, adjustment);
+            adjustJointPos(Serial, 1, pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS){
-            adjustJointPos(Serial, 1, -adjustment);
+            adjustJointPos(Serial, 1, -pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
-            adjustJointPos(Serial, 2, adjustment);
+            adjustJointPos(Serial, 2, pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
-            adjustJointPos(Serial, 2, -adjustment);
+            adjustJointPos(Serial, 2, -pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            adjustJointPos(Serial, 3, adjustment);
+            adjustJointPos(Serial, 3, pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-            adjustJointPos(Serial, 3, -adjustment);
+            adjustJointPos(Serial, 3, -pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-            adjustJointPos(Serial, 4, adjustment);
+            adjustJointPos(Serial, 4, pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-            adjustJointPos(Serial, 4, -adjustment);
+            adjustJointPos(Serial, 4, -pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-            adjustJointPos(Serial, 5, adjustment);
+            adjustJointPos(Serial, 5, pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-            adjustJointPos(Serial, 5, -adjustment);
+            adjustJointPos(Serial, 5, -pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-            adjustJointPos(Serial, 6, adjustment);
+            adjustJointPos(Serial, 6, pos_adjustment);
         }
         if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-            adjustJointPos(Serial, 6, -adjustment);
+            adjustJointPos(Serial, 6, -pos_adjustment);
         }
 
         /*
@@ -282,10 +295,14 @@ int main(){
         if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
             chaos(Serial, glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
         }
-        if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS){
-            std::cout << "Reset Positions and Speed\n";
-            homeArm(Serial);
-            setSpeed(Serial);
+        if(glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS){
+            std::cout << "Speed down\n";
+            setSpeed(Serial, curr_speed - SPEED_ADJUSTMENT);
+        }
+        if(glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS){
+            std::cout << "Speed up!\n";
+            
+            setSpeed(Serial, curr_speed + SPEED_ADJUSTMENT);
         }
 
 
