@@ -22,7 +22,7 @@
 # Serial Commands
 !! All Arguments must be separated by a space !!
 
-* "LIMP" -> Disengage all motors. Takes 1 integer, fails if it is < 1
+* "LIMP" -> Disengage all motors. Takes 1 integer, will re-engage all motors if it is < 1 (or more accurately to the code, if it is not > 0)
 * "READ" -> Retrieve the current positions of each motor
 * "HOME" -> Return to natural position (157.5, 157.5, 157.5, 157.5, 257.5, 90.0)
 * "SETX dddddd" -> Move all joints to a position. Takes 6 doubles, one for each joint
