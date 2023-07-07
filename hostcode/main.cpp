@@ -9,8 +9,8 @@
 #define DEBUG true // Enables opengl debug info callback
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
 #define BAUD_RATE B115200
-#define ADJUSTMENT_START 30 // Degree adjustment per step
-#define SPEED_START 30 // Degrees per second speed
+#define ADJUSTMENT_START 15 // Degree adjustment per step
+#define SPEED_START 60 // Degrees per second speed
 #define SYNC_TIMEOUT 100
 
 /*
@@ -39,12 +39,16 @@ std::vector<double> getJointPositions(arduinoSerial& Serial){
     Currently unused, but useful for setting multiple joint positions in one go
     Keeping here for now just in case it becomes useful
 */
-void setJointPositions(arduinoSerial& Serial, std::vector<double> positions){
+void setJointPositions(arduinoSerial& Serial, std::vector<double>& positions){
     std::string cmd = "SETX";
     for(double& p : positions){
         cmd += " " + std::to_string(p);
     }
-    Serial.print(cmd);
+    Serial.print(cmd + "\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
+    char response[RESPONSE_MAX_SIZE] = {0};
+    Serial.readBytesUntil('\n', response, RESPONSE_MAX_SIZE);
+    std::cout << "setJointPositions(): Read response: " << response << std::endl;
 }
 
 
@@ -88,6 +92,24 @@ void homeArm(arduinoSerial& Serial){
     std::cout << "homeArm(): Read response: " << response << std::endl;
 }
 
+void wave(arduinoSerial& Serial){
+    std::vector<std::vector<double>> positions = {
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
+    };
+    for(auto p : positions){
+        setJointPositions(Serial, p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+}
 
 int main(){
     // Initialise serial communication
@@ -180,6 +202,14 @@ int main(){
         }
         if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
             adjustJointPos(Serial, 6, -adjustment);
+        }
+
+        /*
+            Perform a wave :D
+        */
+        if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
+            std::cout << "Waving!\n";
+            wave(Serial);
         }
 
         glfwSwapBuffers(window); // Render the current frame
