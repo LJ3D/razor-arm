@@ -94,15 +94,29 @@ void homeArm(arduinoSerial& Serial){
 
 void wave(arduinoSerial& Serial){
     std::vector<std::vector<double>> positions = {
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157/2, 200, 180, 167.5, 90},
+        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
+    };
+    for(auto p : positions){
+        setJointPositions(Serial, p);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+
+void pickUp(arduinoSerial& Serial){
+    std::vector<std::vector<double>> positions = {
         {157.5, 157.5, 187.5, 57.5, 157.5, 90},
-        {157.5, 157/2, 200, 180, 167.5, 90},
-        {157.5, 157/2, 100, 130, 167.5, 90},
-        {157.5, 157/2, 200, 180, 167.5, 90},
-        {157.5, 157/2, 100, 130, 167.5, 90},
-        {157.5, 157/2, 200, 180, 167.5, 90},
-        {157.5, 157/2, 100, 130, 167.5, 90},
-        {157.5, 157/2, 200, 180, 167.5, 90},
-        {157.5, 157/2, 100, 130, 167.5, 90},
+        {157.5, 100, 200, 100, 100, 90},
+        {157.5, 100, 200, 100, 150, 90},
+        {157.5, 100, 200, 100, 150, 120},
+        {157.5, 100, 200, 100, 100, 120},
         {157.5, 157.5, 187.5, 57.5, 157.5, 90}
     };
     for(auto p : positions){
@@ -233,6 +247,15 @@ int main(){
             std::cout << "Worm Time!\n";
             worm(Serial);
         }
+
+        /*
+            Pretend to pick something up
+        */
+        if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
+            std::cout << "Dancing!\n";
+            pickUp(Serial);
+        }
+
         glfwSwapBuffers(window); // Render the current frame
     }
 
