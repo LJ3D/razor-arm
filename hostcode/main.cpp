@@ -11,6 +11,7 @@
 #define RESPONSE_MAX_SIZE 256 // Guesstimated buffer size for receiving response from arm to commands
 #define BAUD_RATE B115200
 #define POS_ADJUSTMENT_START 15 // Degree adjustment per step
+#define POS_ADJUSTMENT_ADJUSTMENT 1 // Degree adjustment per step adjustment
 #define SPEED_ADJUSTMENT 10 // Degrees per second
 #define SPEED_START 60 // Degrees per second speed
 #define SYNC_TIMEOUT 100
@@ -226,6 +227,7 @@ int main(){
             std::cout << "Reset Positions and Speed\n";
             homeArm(Serial);
             setSpeed(Serial);
+            pos_adjustment = POS_ADJUSTMENT_START;
         }
 
         /*
@@ -298,14 +300,33 @@ int main(){
         if(glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS){
             chaos(Serial, glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
         }
+
+        /*
+            Adjust deg/sec speed
+        */
         if(glfwGetKey(window, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS){
             std::cout << "Speed down\n";
             setSpeed(Serial, curr_speed - SPEED_ADJUSTMENT);
         }
         if(glfwGetKey(window, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS){
             std::cout << "Speed up!\n";
-            
             setSpeed(Serial, curr_speed + SPEED_ADJUSTMENT);
+        }
+
+        /*
+            Adjust degree adjustment
+        */
+        if(glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS){
+            std::cout << "Degree adjustment down, new adjustment: " << pos_adjustment - POS_ADJUSTMENT_ADJUSTMENT << "\n";
+            pos_adjustment -= POS_ADJUSTMENT_ADJUSTMENT;
+            pos_adjustment = std::max(pos_adjustment, 0.0);
+            pos_adjustment = std::min(pos_adjustment, 45.0);
+        }
+        if(glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS){
+            std::cout << "Degree adjustment up, new adjustment: " << pos_adjustment + POS_ADJUSTMENT_ADJUSTMENT << "\n";
+            pos_adjustment += POS_ADJUSTMENT_ADJUSTMENT;
+            pos_adjustment = std::max(pos_adjustment, 0.0);
+            pos_adjustment = std::min(pos_adjustment, 45.0);
         }
 
 
