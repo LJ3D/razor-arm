@@ -17,6 +17,7 @@
 #define SYNC_TIMEOUT 100
 
 int curr_speed = SPEED_START;
+int wait_time;
 /*
     Reads all the current joint positions from the arm.
     Currently only included as way to get potential debug info.
@@ -55,7 +56,6 @@ void setJointPositions(arduinoSerial& Serial, std::vector<double>& positions){
     std::cout << "setJointPositions(): Read response: " << response << std::endl;
 }
 
-
 /*
     Moves one of the joints (specified by idx, which ranges from 1-6) by adj degrees
 */
@@ -81,6 +81,7 @@ void setSpeed(arduinoSerial& Serial, int speed = SPEED_START, bool noset = false
     if(!noset){
         curr_speed = speed;
     }
+    wait_time = 1000 / speed
     Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::cout << "setSpeed(): Set speed to " << speed << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
@@ -116,7 +117,7 @@ void wave(arduinoSerial& Serial){
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
 }
 
@@ -131,7 +132,7 @@ void pickUp(arduinoSerial& Serial){
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
 }
 
@@ -150,7 +151,7 @@ void worm(arduinoSerial& Serial){
     };
     for(auto p : positions){
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
 }
 void chaos(arduinoSerial& Serial, bool death = false){
@@ -163,7 +164,7 @@ void chaos(arduinoSerial& Serial, bool death = false){
             p[i] = (double)(rand() % 150 + 50);
         }
         setJointPositions(Serial, p);
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
     }
     setSpeed(Serial, curr_speed);
 }
@@ -173,6 +174,7 @@ int main(){
     Serial.openPort("/dev/ttyACM0"); // Default file for an arduino uno
     Serial.begin(BAUD_RATE);
     srand(time(NULL));
+    bool limp = false;
     // Begin GLFW + OpenGL boilerplate
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Use OpenGL 3.3 core profile:
@@ -326,6 +328,11 @@ int main(){
             pos_adjustment += POS_ADJUSTMENT_ADJUSTMENT;
             pos_adjustment = std::max(pos_adjustment, 0.0);
             pos_adjustment = std::min(pos_adjustment, 45.0);
+        }
+        if(glfwGetKey(window, GLFW_KEY_BACKSLASH) == GLFW_PRESS){
+            Serial.print(std::string("LIMP ") + limp ? "0": "1");
+            limp = !limp;
+            std::cout << "Toggled limp";
         }
 
 
