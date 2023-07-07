@@ -252,17 +252,13 @@ int main(){
             std::cout << "Dancing!\n";
             pickUp(Serial);
         }
+
+        /*
+            worm
+        */
         if(glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS){
             std::cout << "Worm Time!\n";
             worm(Serial);
-        }
-
-        /*
-            Pretend to pick something up
-        */
-        if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
-            std::cout << "Dancing!\n";
-            pickUp(Serial);
         }
 
         glfwSwapBuffers(window); // Render the current frame
