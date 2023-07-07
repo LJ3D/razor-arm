@@ -145,19 +145,8 @@ void worm(arduinoSerial& Serial){
     }
 }
 void chaos(arduinoSerial& Serial){
-    std::vector<std::vector<double>> positions = {
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50, rand() % 150 + 50},
-        {157.5, 157.5, 187.5, 57.5, 157.5, 90}
-    };
-    for(auto p : positions){
+    for(int i=0; i<20; i++){
+        std::vector<double> p = {157.5, (double)(rand() % 150 + 50), (double)(rand() % 150 + 50), (double)(rand() % 150 + 50), (double)(rand() % 150 + 50), (double)(rand() % 150 + 50)};
         setJointPositions(Serial, p);
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
@@ -167,7 +156,7 @@ int main(){
     arduinoSerial Serial; // Provides very arduino-like functions for interacting with a serial device
     Serial.openPort("/dev/ttyACM0"); // Default file for an arduino uno
     Serial.begin(BAUD_RATE);
-    srand(time(NULL))
+    srand(time(NULL));
     // Begin GLFW + OpenGL boilerplate
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // Use OpenGL 3.3 core profile:
