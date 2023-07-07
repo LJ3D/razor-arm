@@ -21,6 +21,7 @@
 * "]" -> Increases the speed of all motors /-/ -> Calls setSpeed(Serial, curr_speed + SPEED_ADJUSTMENT)
 * "-" -> Decrease the angle adjustment by 1 /-/ Sets pos_adjustment to itself - 1
 * "=" -> Increase the angle adjustment by 1 /-/ Sets pos_adjustment to itself + 1
+* "\" Toggles limp mode /-/ Sends either "LIMP 1" or "LIMP 0" over the serial
 
 
 # Keyboard-Called Commands
