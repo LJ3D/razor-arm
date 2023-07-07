@@ -14,6 +14,7 @@
 #define SPEED_START 60 // Degrees per second speed
 #define SYNC_TIMEOUT 100
 
+int curr_speed = SPEED_START;
 /*
     Reads all the current joint positions from the arm.
     Currently only included as way to get potential debug info.
@@ -72,7 +73,7 @@ void adjustJointPos(arduinoSerial& Serial, int idx, double adj){
     Sets the speed of the movement of the robot arm.
     Speed is in degrees/second
 */
-void setSpeed(arduinoSerial& Serial, int speed){
+void setSpeed(arduinoSerial& Serial, int speed = SPEED_START){
     Serial.print("SPEED " + std::to_string(speed) + "\n");
     std::this_thread::sleep_for(std::chrono::milliseconds(SYNC_TIMEOUT));
     char response[RESPONSE_MAX_SIZE] = {0};
@@ -145,7 +146,7 @@ void worm(arduinoSerial& Serial){
     }
 }
 void chaos(arduinoSerial& Serial, bool death = false){
-    setSpeed(Serial, death ? 120 : SPEED_START);
+    setSpeed(Serial, death ? 120 : curr_speed);
     std::cout << (death ? "CHAOS IS COME, ": "") + "FEAR THE ARM \n";
     std::vector<double> p;
     p.resize(6);
@@ -156,7 +157,7 @@ void chaos(arduinoSerial& Serial, bool death = false){
         setJointPositions(Serial, p);
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
-    setSpeed(Serial, SPEED_START);
+    setSpeed(Serial, curr_speed);
 }
 int main(){
     // Initialise serial communication
@@ -187,7 +188,7 @@ int main(){
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     // End GLFW + OpenGL boilerplate
 
-    setSpeed(Serial, SPEED_START);
+    setSpeed(Serial);
     double adjustment = ADJUSTMENT_START;
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
